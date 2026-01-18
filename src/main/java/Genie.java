@@ -1,6 +1,8 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Genie {
+    private static ArrayList<Task> tasks = new ArrayList<>();
     public static void main(String[] args) {
         String line = "____________________________________________________________";
         Scanner scanner = new Scanner(System.in);
@@ -20,13 +22,21 @@ public class Genie {
                 System.out.println(" Bye. Hope to see you again soon!");
                 System.out.println(line);
                 break;
+            } else if (input.equals("list")) {
+                for (int i = 0; i < tasks.size(); i++) {
+                    System.out.println(" " + (i + 1) + ". " + tasks.get(i).getDescription());
+                }
+                System.out.println(line);
             } else {
-                // Echo the input
-                System.out.println(" " + input);
+                // Add task
+                Task task = new Task(input);
+                tasks.add(task);
+                System.out.println(" added: " + input);
                 System.out.println(line);
             }
         }
 
         scanner.close();
+    }
 }
-}
+
