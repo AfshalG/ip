@@ -2,8 +2,8 @@
  * Represents a task with a description and completion status.
  */
 public class Task {
-    private String description;
-    private boolean isDone;
+    protected String description;
+    protected boolean isDone;
 
     /**
      * Creates a new task with the given description.
@@ -41,5 +41,14 @@ public class Task {
      */
     public void markAsUndone() {
         this.isDone = false;
+    }
+
+    /**
+     * Returns the type icon of this task.
+     *
+     * @return The type icon (default "?")
+     */
+    public String getTypeIcon() {
+        return "?";
     }
 }
