@@ -1,3 +1,5 @@
+package genie.task;
+
 /**
  * Represents an event task with start and end times.
  */

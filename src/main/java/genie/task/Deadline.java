@@ -1,3 +1,5 @@
+package genie.task;
+
 /**
  * Represents a task with a deadline.
  */
