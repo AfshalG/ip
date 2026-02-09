@@ -1,5 +1,13 @@
+package genie;
+
 import java.util.Scanner;
 import java.util.ArrayList;
+
+import genie.task.Task;
+import genie.task.Todo;
+import genie.task.Deadline;
+import genie.task.Event;
+import genie.exception.GenieException;
 
 public class Genie {
     private static final String LINE = "____________________________________________________________";

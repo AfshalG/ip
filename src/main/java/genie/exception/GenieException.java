@@ -1,3 +1,5 @@
+package genie.exception;
+
 /**
  * Represents exceptions specific to Genie chatbot.
  */
