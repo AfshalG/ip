@@ -76,6 +76,8 @@ public class Genie {
             handleDeadline(input);
         } else if (input.startsWith("event")) {
             handleEvent(input);
+        } else if (input.startsWith("delete")) {
+            handleDelete(input);
         } else {
             throw new GenieException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
@@ -210,6 +212,34 @@ public class Genie {
             + deadline.getStatusIcon() + "] " + deadline.getDescription());
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
         System.out.println(LINE);
+    }
+
+    /**
+     * Handles the delete command.
+     *
+     * @param input The user input string
+     * @throws GenieException If the task index is invalid or out of range
+     */
+    private static void handleDelete(String input) throws GenieException {
+        try {
+            String[] parts = input.split(" ", 2);
+            if (parts.length < 2) {
+                throw new GenieException("OOPS!!! Please specify which task to delete.");
+            }
+            int taskIndex = Integer.parseInt(parts[1].trim()) - 1;
+            if (taskIndex < 0 || taskIndex >= tasks.size()) {
+                throw new GenieException("OOPS!!! Invalid task number. Please use a number from 1 to "
+                    + tasks.size() + ".");
+            }
+            Task removed = tasks.remove(taskIndex);
+            System.out.println(" Noted. I've removed this task:");
+            System.out.println("   [" + removed.getTypeIcon() + "]["
+                + removed.getStatusIcon() + "] " + removed.getDescription());
+            System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+            System.out.println(LINE);
+        } catch (NumberFormatException e) {
+            throw new GenieException("OOPS!!! Please provide a valid task number.");
+        }
     }
 
     /**
