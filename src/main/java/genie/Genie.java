@@ -12,6 +12,9 @@ import genie.storage.Storage;
 
 public class Genie {
     private static final String LINE = "____________________________________________________________";
+    private static final String BY_SEPARATOR = " /by ";
+    private static final String FROM_SEPARATOR = " /from ";
+    private static final String TO_SEPARATOR = " /to ";
     private static ArrayList<Task> tasks = Storage.load();
 
     public static void main(String[] args) {
@@ -170,21 +173,17 @@ public class Genie {
      * @throws GenieException If the todo description is empty
      */
     private static void handleTodo(String input) throws GenieException {
-        if (input.length() <= 4) {
+        if (input.length() <= "todo".length()) {
             throw new GenieException("OOPS!!! The description of a todo cannot be empty.");
         }
-        String description = input.substring(4).trim();
+        String description = input.substring("todo".length()).trim();
         if (description.isEmpty()) {
             throw new GenieException("OOPS!!! The description of a todo cannot be empty.");
         }
         Todo todo = new Todo(description);
         tasks.add(todo);
         Storage.save(tasks);
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("   [" + todo.getTypeIcon() + "]["
-            + todo.getStatusIcon() + "] " + todo.getDescription());
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println(LINE);
+        printTaskAdded(todo);
     }
 
     /**
@@ -194,16 +193,16 @@ public class Genie {
      * @throws GenieException If the deadline format is invalid or fields are empty
      */
     private static void handleDeadline(String input) throws GenieException {
-        if (input.length() <= 8) {
+        if (input.length() <= "deadline".length()) {
             throw new GenieException("OOPS!!! The description of a deadline cannot be empty.");
         }
-        String content = input.substring(8).trim();
-        int byIndex = content.indexOf(" /by ");
+        String content = input.substring("deadline".length()).trim();
+        int byIndex = content.indexOf(BY_SEPARATOR);
         if (byIndex == -1) {
             throw new GenieException("OOPS!!! Please specify a deadline using /by.");
         }
         String description = content.substring(0, byIndex).trim();
-        String by = content.substring(byIndex + 5).trim();
+        String by = content.substring(byIndex + BY_SEPARATOR.length()).trim();
 
         if (description.isEmpty() || by.isEmpty()) {
             throw new GenieException("OOPS!!! Description and deadline cannot be empty.");
@@ -212,9 +211,18 @@ public class Genie {
         Deadline deadline = new Deadline(description, by);
         tasks.add(deadline);
         Storage.save(tasks);
+        printTaskAdded(deadline);
+    }
+
+    /**
+     * Prints the confirmation message after a task is added.
+     *
+     * @param task The task that was added
+     */
+    private static void printTaskAdded(Task task) {
         System.out.println(" Got it. I've added this task:");
-        System.out.println("   [" + deadline.getTypeIcon() + "]["
-            + deadline.getStatusIcon() + "] " + deadline.getDescription());
+        System.out.println("   [" + task.getTypeIcon() + "]["
+            + task.getStatusIcon() + "] " + task.getDescription());
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
         System.out.println(LINE);
     }
@@ -237,6 +245,7 @@ public class Genie {
                     + tasks.size() + ".");
             }
             Task removed = tasks.remove(taskIndex);
+            Storage.save(tasks);
             System.out.println(" Noted. I've removed this task:");
             System.out.println("   [" + removed.getTypeIcon() + "]["
                 + removed.getStatusIcon() + "] " + removed.getDescription());
@@ -254,20 +263,20 @@ public class Genie {
      * @throws GenieException If the event format is invalid or fields are empty
      */
     private static void handleEvent(String input) throws GenieException {
-        if (input.length() <= 5) {
+        if (input.length() <= "event".length()) {
             throw new GenieException("OOPS!!! The description of an event cannot be empty.");
         }
-        String content = input.substring(5).trim();
-        int fromIndex = content.indexOf(" /from ");
-        int toIndex = content.indexOf(" /to ");
+        String content = input.substring("event".length()).trim();
+        int fromIndex = content.indexOf(FROM_SEPARATOR);
+        int toIndex = content.indexOf(TO_SEPARATOR);
 
         if (fromIndex == -1 || toIndex == -1) {
             throw new GenieException("OOPS!!! Please specify event timing using /from and /to.");
         }
 
         String description = content.substring(0, fromIndex).trim();
-        String from = content.substring(fromIndex + 7, toIndex).trim();
-        String to = content.substring(toIndex + 5).trim();
+        String from = content.substring(fromIndex + FROM_SEPARATOR.length(), toIndex).trim();
+        String to = content.substring(toIndex + TO_SEPARATOR.length()).trim();
 
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
             throw new GenieException("OOPS!!! Description and timing cannot be empty.");
@@ -276,10 +285,6 @@ public class Genie {
         Event event = new Event(description, from, to);
         tasks.add(event);
         Storage.save(tasks);
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("   [" + event.getTypeIcon() + "]["
-            + event.getStatusIcon() + "] " + event.getDescription());
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println(LINE);
+        printTaskAdded(event);
     }
 }
