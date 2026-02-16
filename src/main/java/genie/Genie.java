@@ -8,10 +8,11 @@ import genie.task.Todo;
 import genie.task.Deadline;
 import genie.task.Event;
 import genie.exception.GenieException;
+import genie.storage.Storage;
 
 public class Genie {
     private static final String LINE = "____________________________________________________________";
-    private static ArrayList<Task> tasks = new ArrayList<>();
+    private static ArrayList<Task> tasks = Storage.load();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -118,6 +119,7 @@ public class Genie {
                 throw new GenieException("OOPS!!! This task is already marked as done.");
             }
             task.markAsDone();
+            Storage.save(tasks);
             System.out.println(" Nice! I've marked this task as done:");
             System.out.println("   [" + task.getStatusIcon()
                 + "] " + task.getDescription());
@@ -149,6 +151,7 @@ public class Genie {
                 throw new GenieException("OOPS!!! This task is already unmarked.");
             }
             task.markAsUndone();
+            Storage.save(tasks);
             System.out.println(" OK, I've marked this task as not done yet:");
             System.out.println("   [" + task.getStatusIcon()
                 + "] " + task.getDescription());
@@ -174,6 +177,7 @@ public class Genie {
         }
         Todo todo = new Todo(description);
         tasks.add(todo);
+        Storage.save(tasks);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   [" + todo.getTypeIcon() + "]["
             + todo.getStatusIcon() + "] " + todo.getDescription());
@@ -205,6 +209,7 @@ public class Genie {
 
         Deadline deadline = new Deadline(description, by);
         tasks.add(deadline);
+        Storage.save(tasks);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   [" + deadline.getTypeIcon() + "]["
             + deadline.getStatusIcon() + "] " + deadline.getDescription());
@@ -240,6 +245,7 @@ public class Genie {
 
         Event event = new Event(description, from, to);
         tasks.add(event);
+        Storage.save(tasks);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   [" + event.getTypeIcon() + "]["
             + event.getStatusIcon() + "] " + event.getDescription());
