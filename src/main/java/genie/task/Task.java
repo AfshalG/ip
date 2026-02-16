@@ -62,4 +62,14 @@ public class Task {
     public String getTypeIcon() {
         return "?";
     }
+
+    /**
+     * Returns a string representation of this task for saving to file.
+     * Format: TYPE | STATUS | DESCRIPTION
+     *
+     * @return The file string representation
+     */
+    public String toFileString() {
+        return getTypeIcon() + " | " + (isDone ? "1" : "0") + " | " + description;
+    }
 }

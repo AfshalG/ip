@@ -36,4 +36,15 @@ public class Deadline extends Task {
     public String getDescription() {
         return super.getDescription() + " (by: " + by + ")";
     }
+
+    /**
+     * Returns a string representation of this deadline for saving to file.
+     * Format: D | STATUS | DESCRIPTION | BY
+     *
+     * @return The file string representation
+     */
+    @Override
+    public String toFileString() {
+        return super.toFileString() + " | " + by;
+    }
 }

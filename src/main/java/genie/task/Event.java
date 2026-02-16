@@ -39,4 +39,15 @@ public class Event extends Task {
     public String getDescription() {
         return super.getDescription() + " (from: " + from + " to: " + to + ")";
     }
+
+    /**
+     * Returns a string representation of this event for saving to file.
+     * Format: E | STATUS | DESCRIPTION | FROM | TO
+     *
+     * @return The file string representation
+     */
+    @Override
+    public String toFileString() {
+        return super.toFileString() + " | " + from + " | " + to;
+    }
 }
