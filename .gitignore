@@ -16,5 +16,8 @@ bin/
 # Compiled class files
 *.class
 
+# JAR files
+*.jar
+
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
