@@ -6,6 +6,7 @@ import genie.command.AddTodoCommand;
 import genie.command.ByeCommand;
 import genie.command.Command;
 import genie.command.DeleteCommand;
+import genie.command.FindCommand;
 import genie.command.ListCommand;
 import genie.command.MarkCommand;
 import genie.command.UnmarkCommand;
@@ -40,6 +41,8 @@ public class Parser {
             return new AddEventCommand(input);
         } else if (input.startsWith("delete")) {
             return new DeleteCommand(input);
+        } else if (input.startsWith("find")) {
+            return new FindCommand(input);
         } else {
             throw new GenieException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }

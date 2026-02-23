@@ -133,6 +133,22 @@ public class Ui {
     }
 
     /**
+     * Displays tasks that match a search keyword.
+     *
+     * @param tasks The list of matching tasks
+     */
+    public void showMatchingTasks(TaskList tasks) {
+        System.out.println(" Here are the matching tasks in your list:");
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.getTask(i);
+            System.out.println(" " + (i + 1) + ".["
+                + task.getTypeIcon() + "]["
+                + task.getStatusIcon() + "] "
+                + task.getDescription());
+        }
+    }
+
+    /**
      * Closes the scanner.
      */
     public void close() {
