@@ -1,12 +1,15 @@
 todo read book
 todo return book
-deadline submit assignment /by Sunday
-deadline finish project /by next Friday
+deadline submit assignment /by 2025-12-01
+deadline finish project /by 2025-11-30
 event team meeting /from 2pm /to 4pm
 list
 mark 1
 mark 3
 list
 unmark 1
+list
+find book
+delete 4
 list
 bye

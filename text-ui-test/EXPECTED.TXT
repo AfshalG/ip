@@ -14,12 +14,12 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] submit assignment (by: Sunday)
+   [D][ ] submit assignment (by: Dec 01 2025)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] finish project (by: next Friday)
+   [D][ ] finish project (by: Nov 30 2025)
  Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -31,8 +31,8 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] read book
  2.[T][ ] return book
- 3.[D][ ] submit assignment (by: Sunday)
- 4.[D][ ] finish project (by: next Friday)
+ 3.[D][ ] submit assignment (by: Dec 01 2025)
+ 4.[D][ ] finish project (by: Nov 30 2025)
  5.[E][ ] team meeting (from: 2pm to: 4pm)
 ____________________________________________________________
 ____________________________________________________________
@@ -41,14 +41,14 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Nice! I've marked this task as done:
-   [X] submit assignment (by: Sunday)
+   [X] submit assignment (by: Dec 01 2025)
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][X] read book
  2.[T][ ] return book
- 3.[D][X] submit assignment (by: Sunday)
- 4.[D][ ] finish project (by: next Friday)
+ 3.[D][X] submit assignment (by: Dec 01 2025)
+ 4.[D][ ] finish project (by: Nov 30 2025)
  5.[E][ ] team meeting (from: 2pm to: 4pm)
 ____________________________________________________________
 ____________________________________________________________
@@ -59,9 +59,26 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] read book
  2.[T][ ] return book
- 3.[D][X] submit assignment (by: Sunday)
- 4.[D][ ] finish project (by: next Friday)
+ 3.[D][X] submit assignment (by: Dec 01 2025)
+ 4.[D][ ] finish project (by: Nov 30 2025)
  5.[E][ ] team meeting (from: 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+ 1.[T][ ] read book
+ 2.[T][ ] return book
+____________________________________________________________
+____________________________________________________________
+ Noted. I've removed this task:
+   [D][ ] finish project (by: Nov 30 2025)
+ Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+ 2.[T][ ] return book
+ 3.[D][X] submit assignment (by: Dec 01 2025)
+ 4.[E][ ] team meeting (from: 2pm to: 4pm)
 ____________________________________________________________
 ____________________________________________________________
  Bye. Hope to see you again soon!
