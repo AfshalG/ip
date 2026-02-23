@@ -13,11 +13,18 @@ import genie.task.Todo;
 
 /**
  * Handles loading and saving tasks to a file.
- * File is stored at ./data/genie.txt relative to the project root.
  */
 public class Storage {
-    private static final String FILE_PATH = "./data/genie.txt";
-    private static final String DIR_PATH = "./data";
+    private final String filePath;
+
+    /**
+     * Creates a Storage instance that reads and writes to the given file path.
+     *
+     * @param filePath The path to the data file
+     */
+    public Storage(String filePath) {
+        this.filePath = filePath;
+    }
 
     /**
      * Loads tasks from the data file.
@@ -26,9 +33,9 @@ public class Storage {
      *
      * @return ArrayList of tasks loaded from file
      */
-    public static ArrayList<Task> load() {
+    public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
 
         if (!file.exists()) {
             return tasks;
@@ -62,13 +69,14 @@ public class Storage {
      *
      * @param tasks The list of tasks to save
      */
-    public static void save(ArrayList<Task> tasks) {
-        File dir = new File(DIR_PATH);
-        if (!dir.exists()) {
+    public void save(ArrayList<Task> tasks) {
+        File file = new File(filePath);
+        File dir = file.getParentFile();
+        if (dir != null && !dir.exists()) {
             dir.mkdirs();
         }
 
-        try (FileWriter writer = new FileWriter(FILE_PATH)) {
+        try (FileWriter writer = new FileWriter(filePath)) {
             for (Task task : tasks) {
                 writer.write(task.toFileString() + System.lineSeparator());
             }
@@ -88,7 +96,7 @@ public class Storage {
      * @return The parsed Task, or null if the type is unknown
      * @throws Exception If the line format is invalid
      */
-    private static Task parseTask(String line) throws Exception {
+    private Task parseTask(String line) throws Exception {
         String[] parts = line.split(" \\| ");
         if (parts.length < 3) {
             throw new Exception("Invalid format");

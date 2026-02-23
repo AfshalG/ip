@@ -1,290 +1,64 @@
 package genie;
 
-import java.util.Scanner;
-import java.util.ArrayList;
-
-import genie.task.Task;
-import genie.task.Todo;
-import genie.task.Deadline;
-import genie.task.Event;
+import genie.command.Command;
 import genie.exception.GenieException;
+import genie.parser.Parser;
 import genie.storage.Storage;
+import genie.task.TaskList;
+import genie.ui.Ui;
 
+/**
+ * Main class for the Genie task manager chatbot.
+ */
 public class Genie {
-    private static final String LINE = "____________________________________________________________";
-    private static final String BY_SEPARATOR = " /by ";
-    private static final String FROM_SEPARATOR = " /from ";
-    private static final String TO_SEPARATOR = " /to ";
-    private static ArrayList<Task> tasks = Storage.load();
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        showWelcome();
-        runCommandLoop(scanner);
-
-        scanner.close();
-    }
+    private final Storage storage;
+    private TaskList tasks;
+    private final Ui ui;
 
     /**
-     * Displays the welcome message.
-     */
-    private static void showWelcome() {
-        System.out.println(LINE);
-        System.out.println(" Hello! I'm Genie");
-        System.out.println(" What can I do for you?");
-        System.out.println(LINE);
-    }
-
-    /**
-     * Runs the main command loop.
+     * Creates a Genie instance with the given data file path.
      *
-     * @param scanner The scanner for reading user input
+     * @param filePath Path to the file used for saving and loading tasks
      */
-    private static void runCommandLoop(Scanner scanner) {
-        while (true) {
-            String input = scanner.nextLine();
-            System.out.println(LINE);
+    public Genie(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = new TaskList(storage.load());
+        } catch (Exception e) {
+            ui.showLoadingError();
+            tasks = new TaskList();
+        }
+    }
 
-            if (input.equals("bye")) {
-                System.out.println(" Bye. Hope to see you again soon!");
-                System.out.println(LINE);
-                break;
-            }
-
+    /**
+     * Runs the main command loop until the user exits.
+     */
+    public void run() {
+        ui.showWelcome();
+        boolean isExit = false;
+        while (!isExit) {
             try {
-                handleCommand(input);
+                String fullCommand = ui.readCommand();
+                ui.showLine();
+                Command c = Parser.parse(fullCommand);
+                c.execute(tasks, ui, storage);
+                isExit = c.isExit();
             } catch (GenieException e) {
-                System.out.println(" " + e.getMessage());
-                System.out.println(LINE);
+                ui.showError(e.getMessage());
+            } finally {
+                ui.showLine();
             }
         }
+        ui.close();
     }
 
     /**
-     * Handles a user command.
+     * Entry point for the Genie application.
      *
-     * @param input The user input string
-     * @throws GenieException If the command is invalid or encounters an error
+     * @param args Command-line arguments (not used)
      */
-    private static void handleCommand(String input) throws GenieException {
-        if (input.equals("list")) {
-            handleList();
-        } else if (input.startsWith("mark")) {
-            handleMark(input);
-        } else if (input.startsWith("unmark")) {
-            handleUnmark(input);
-        } else if (input.startsWith("todo")) {
-            handleTodo(input);
-        } else if (input.startsWith("deadline")) {
-            handleDeadline(input);
-        } else if (input.startsWith("event")) {
-            handleEvent(input);
-        } else if (input.startsWith("delete")) {
-            handleDelete(input);
-        } else {
-            throw new GenieException("OOPS!!! I'm sorry, but I don't know what that means :-(");
-        }
-    }
-
-    /**
-     * Handles the list command.
-     */
-    private static void handleList() {
-        System.out.println(" Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            System.out.println(" " + (i + 1) + ".["
-                + task.getTypeIcon() + "]["
-                + task.getStatusIcon() + "] "
-                + task.getDescription());
-        }
-        System.out.println(LINE);
-    }
-
-    /**
-     * Handles the mark command.
-     *
-     * @param input The user input string
-     * @throws GenieException If the task index is invalid or out of range
-     */
-    private static void handleMark(String input) throws GenieException {
-        try {
-            String[] parts = input.split(" ", 2);
-            if (parts.length < 2) {
-                throw new GenieException("OOPS!!! Please specify which task to mark.");
-            }
-            int taskIndex = Integer.parseInt(parts[1]) - 1;
-            if (taskIndex < 0 || taskIndex >= tasks.size()) {
-                throw new GenieException("OOPS!!! Invalid task number. Please use a number from 1 to "
-                    + tasks.size() + ".");
-            }
-            Task task = tasks.get(taskIndex);
-            if (task.isDone()) {
-                throw new GenieException("OOPS!!! This task is already marked as done.");
-            }
-            task.markAsDone();
-            Storage.save(tasks);
-            System.out.println(" Nice! I've marked this task as done:");
-            System.out.println("   [" + task.getStatusIcon()
-                + "] " + task.getDescription());
-            System.out.println(LINE);
-        } catch (NumberFormatException e) {
-            throw new GenieException("OOPS!!! Please provide a valid task number.");
-        }
-    }
-
-    /**
-     * Handles the unmark command.
-     *
-     * @param input The user input string
-     * @throws GenieException If the task index is invalid or out of range
-     */
-    private static void handleUnmark(String input) throws GenieException {
-        try {
-            String[] parts = input.split(" ", 2);
-            if (parts.length < 2) {
-                throw new GenieException("OOPS!!! Please specify which task to unmark.");
-            }
-            int taskIndex = Integer.parseInt(parts[1]) - 1;
-            if (taskIndex < 0 || taskIndex >= tasks.size()) {
-                throw new GenieException("OOPS!!! Invalid task number. Please use a number from 1 to "
-                    + tasks.size() + ".");
-            }
-            Task task = tasks.get(taskIndex);
-            if (!task.isDone()) {
-                throw new GenieException("OOPS!!! This task is already unmarked.");
-            }
-            task.markAsUndone();
-            Storage.save(tasks);
-            System.out.println(" OK, I've marked this task as not done yet:");
-            System.out.println("   [" + task.getStatusIcon()
-                + "] " + task.getDescription());
-            System.out.println(LINE);
-        } catch (NumberFormatException e) {
-            throw new GenieException("OOPS!!! Please provide a valid task number.");
-        }
-    }
-
-    /**
-     * Handles the todo command.
-     *
-     * @param input The user input string
-     * @throws GenieException If the todo description is empty
-     */
-    private static void handleTodo(String input) throws GenieException {
-        if (input.length() <= "todo".length()) {
-            throw new GenieException("OOPS!!! The description of a todo cannot be empty.");
-        }
-        String description = input.substring("todo".length()).trim();
-        if (description.isEmpty()) {
-            throw new GenieException("OOPS!!! The description of a todo cannot be empty.");
-        }
-        Todo todo = new Todo(description);
-        tasks.add(todo);
-        Storage.save(tasks);
-        printTaskAdded(todo);
-    }
-
-    /**
-     * Handles the deadline command.
-     *
-     * @param input The user input string
-     * @throws GenieException If the deadline format is invalid or fields are empty
-     */
-    private static void handleDeadline(String input) throws GenieException {
-        if (input.length() <= "deadline".length()) {
-            throw new GenieException("OOPS!!! The description of a deadline cannot be empty.");
-        }
-        String content = input.substring("deadline".length()).trim();
-        int byIndex = content.indexOf(BY_SEPARATOR);
-        if (byIndex == -1) {
-            throw new GenieException("OOPS!!! Please specify a deadline using /by.");
-        }
-        String description = content.substring(0, byIndex).trim();
-        String by = content.substring(byIndex + BY_SEPARATOR.length()).trim();
-
-        if (description.isEmpty() || by.isEmpty()) {
-            throw new GenieException("OOPS!!! Description and deadline cannot be empty.");
-        }
-
-        Deadline deadline = new Deadline(description, by);
-        tasks.add(deadline);
-        Storage.save(tasks);
-        printTaskAdded(deadline);
-    }
-
-    /**
-     * Prints the confirmation message after a task is added.
-     *
-     * @param task The task that was added
-     */
-    private static void printTaskAdded(Task task) {
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("   [" + task.getTypeIcon() + "]["
-            + task.getStatusIcon() + "] " + task.getDescription());
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println(LINE);
-    }
-
-    /**
-     * Handles the delete command.
-     *
-     * @param input The user input string
-     * @throws GenieException If the task index is invalid or out of range
-     */
-    private static void handleDelete(String input) throws GenieException {
-        try {
-            String[] parts = input.split(" ", 2);
-            if (parts.length < 2) {
-                throw new GenieException("OOPS!!! Please specify which task to delete.");
-            }
-            int taskIndex = Integer.parseInt(parts[1].trim()) - 1;
-            if (taskIndex < 0 || taskIndex >= tasks.size()) {
-                throw new GenieException("OOPS!!! Invalid task number. Please use a number from 1 to "
-                    + tasks.size() + ".");
-            }
-            Task removed = tasks.remove(taskIndex);
-            Storage.save(tasks);
-            System.out.println(" Noted. I've removed this task:");
-            System.out.println("   [" + removed.getTypeIcon() + "]["
-                + removed.getStatusIcon() + "] " + removed.getDescription());
-            System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
-            System.out.println(LINE);
-        } catch (NumberFormatException e) {
-            throw new GenieException("OOPS!!! Please provide a valid task number.");
-        }
-    }
-
-    /**
-     * Handles the event command.
-     *
-     * @param input The user input string
-     * @throws GenieException If the event format is invalid or fields are empty
-     */
-    private static void handleEvent(String input) throws GenieException {
-        if (input.length() <= "event".length()) {
-            throw new GenieException("OOPS!!! The description of an event cannot be empty.");
-        }
-        String content = input.substring("event".length()).trim();
-        int fromIndex = content.indexOf(FROM_SEPARATOR);
-        int toIndex = content.indexOf(TO_SEPARATOR);
-
-        if (fromIndex == -1 || toIndex == -1) {
-            throw new GenieException("OOPS!!! Please specify event timing using /from and /to.");
-        }
-
-        String description = content.substring(0, fromIndex).trim();
-        String from = content.substring(fromIndex + FROM_SEPARATOR.length(), toIndex).trim();
-        String to = content.substring(toIndex + TO_SEPARATOR.length()).trim();
-
-        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new GenieException("OOPS!!! Description and timing cannot be empty.");
-        }
-
-        Event event = new Event(description, from, to);
-        tasks.add(event);
-        Storage.save(tasks);
-        printTaskAdded(event);
+    public static void main(String[] args) {
+        new Genie("data/genie.txt").run();
     }
 }
