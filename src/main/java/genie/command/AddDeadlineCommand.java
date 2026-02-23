@@ -1,5 +1,7 @@
 package genie.command;
 
+import java.time.format.DateTimeParseException;
+
 import genie.exception.GenieException;
 import genie.storage.Storage;
 import genie.task.Deadline;
@@ -37,10 +39,14 @@ public class AddDeadlineCommand extends Command {
     }
 
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) {
-        Deadline deadline = new Deadline(description, by);
-        tasks.addTask(deadline);
-        storage.save(tasks.getTasks());
-        ui.showTaskAdded(deadline, tasks.size());
+    public void execute(TaskList tasks, Ui ui, Storage storage) throws GenieException {
+        try {
+            Deadline deadline = new Deadline(description, by);
+            tasks.addTask(deadline);
+            storage.save(tasks.getTasks());
+            ui.showTaskAdded(deadline, tasks.size());
+        } catch (DateTimeParseException e) {
+            throw new GenieException("OOPS!!! Please use date format yyyy-MM-dd for deadlines (e.g., 2019-12-01).");
+        }
     }
 }
