@@ -26,6 +26,13 @@ public class AddTodoCommand extends Command {
         description = content;
     }
 
+    /**
+     * Adds the todo task to the list, saves, and shows confirmation.
+     *
+     * @param tasks   The current task list
+     * @param ui      The Ui instance for user interactions
+     * @param storage The Storage instance for saving tasks
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         Todo todo = new Todo(description);

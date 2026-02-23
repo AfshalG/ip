@@ -40,6 +40,13 @@ public class AddEventCommand extends Command {
         }
     }
 
+    /**
+     * Adds the event task to the list, saves, and shows confirmation.
+     *
+     * @param tasks   The current task list
+     * @param ui      The Ui instance for user interactions
+     * @param storage The Storage instance for saving tasks
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         Event event = new Event(description, from, to);
